@@ -15,12 +15,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "name_to_uid.h"
 #include "trim.h"
 
 #include "readIni.h"
 
-#include "alsa.h"
 
 #define EV_BUF_SIZE 16
 #define NOT_FOUND -1
@@ -40,10 +38,6 @@ int main(int argc, char *argv[])
     unsigned short id[4];                   /* or use struct input_id */
     char name[256] = "N/A";
 
-    uid_t olduid;
-    uid_t newuid;
-    
-    
     struct input_event ev[EV_BUF_SIZE]; /* Read up to N events ata time */
 
     
@@ -61,8 +55,6 @@ int main(int argc, char *argv[])
     fprintf(stderr, "Settings: \n\titem: %s\n\tevent: %s\n\tuser: %s\n",
 	    item,event,user);
     
-    olduid = geteuid();
-    newuid = name_to_uid(user);
     
     fprintf(stderr, "old userid %d\ntouid %d\n",olduid,newuid);
     
@@ -114,38 +106,24 @@ int main(int argc, char *argv[])
 
         /* Implement code to translate type, code and value */
         for (i = 0; i < sz / sizeof(struct input_event); ++i) {
-/*
-            fprintf(stderr,
-                "%ld.%06ld: "
-                "type=%02x "
-                "code=%02x "
-                "value=%02x\n",
-                ev[i].time.tv_sec,
-                ev[i].time.tv_usec,
-                ev[i].type,
-                ev[i].code,
-                ev[i].value
-            );
-*/
-	    if (ev[i].type == EV_KEY &&
+
+            if (ev[i].type == EV_KEY &&
 		ev[i].value ==1 &&
 		(ev[i].code ==113 || ev[i].code == 114 || ev[i].code==115 ))
 	    {
-		seteuid(newuid);
+
 		switch (ev[i].code) 
 		{
 		case 113:// mute/unmute
-		    SetAlsaMasterMute();
-		    
+		    system("su - mpd -c 'amixer set Master toggle'");    
 		    break;
 		case 114://volme down
+		  system("su - mpd -c 'amixer set Master 5%-'");
 		    break;
 		case 115://volume up
+		  system("su - mpd -c 'amixer set Master 5%+'");
 		    break;
 		}
-		
-		seteuid(olduid);
-		
 	    }
 	    
         }
