@@ -20,6 +20,8 @@
 
 #include "readIni.h"
 
+#include "alsa.h"
+
 #define EV_BUF_SIZE 16
 #define NOT_FOUND -1
 
@@ -126,11 +128,22 @@ int main(int argc, char *argv[])
             );
 */
 	    if (ev[i].type == EV_KEY &&
-		ev[i].value ==1 )
+		ev[i].value ==1 &&
+		(ev[i].code ==113 || ev[i].code == 114 || ev[i].code==115 ))
 	    {
-		fprintf(stderr,"keyvalue = %d\n",ev[i].code);
 		seteuid(newuid);
-		/* do stuff */
+		switch (ev[i].code) 
+		{
+		case 113:// mute/unmute
+		    SetAlsaMasterMute();
+		    
+		    break;
+		case 114://volme down
+		    break;
+		case 115://volume up
+		    break;
+		}
+		
 		seteuid(olduid);
 		
 	    }
