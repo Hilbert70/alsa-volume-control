@@ -56,9 +56,6 @@ int main(int argc, char *argv[])
 	    item,event,user);
     
     
-    fprintf(stderr, "old userid %d\ntouid %d\n",olduid,newuid);
-    
-    
     if ((fd = open(event, O_RDONLY)) < 0) {
         fprintf(stderr,
             "ERR %d:\n"
