@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     unsigned version;
     unsigned short id[4];                   /* or use struct input_id */
     char name[256] = "N/A";
-
+    
     struct input_event ev[EV_BUF_SIZE]; /* Read up to N events ata time */
 
     
@@ -49,14 +49,16 @@ int main(int argc, char *argv[])
         return EINVAL;
     }
     
-    readIni(argv[1]);
+    readIni(argv[1],&initItems);
     
     
-    fprintf(stderr, "Settings: \n\titem: %s\n\tevent: %s\n\tuser: %s\n",
-	    item,event,user);
+    fprintf(stderr, "Settings: \n");
+    for (i=0;i<CFG_MAX;i++) {
+	fprintf(stderr,"%s: %s\n",initItems[i].name,initItems[i].value);
+    }
     
     
-    if ((fd = open(event, O_RDONLY)) < 0) {
+    if ((fd = open(initItems[CFG_EVENT].value, O_RDONLY)) < 0) {
         fprintf(stderr,
             "ERR %d:\n"
             "Unable to open `%s'\n"
@@ -112,13 +114,13 @@ int main(int argc, char *argv[])
 		switch (ev[i].code) 
 		{
 		case 113:// mute/unmute
-		    system("su - mpd -c 'amixer set Master toggle'");    
+		    system(initItems[CFG_MUTE].value);    
 		    break;
 		case 114://volme down
-		  system("su - mpd -c 'amixer set Master 5%-'");
+		  system(initItems[CFG_VOLUP].value);
 		    break;
 		case 115://volume up
-		  system("su - mpd -c 'amixer set Master 5%+'");
+		  system(initItems[CFG_VOLDWN].value);
 		    break;
 		}
 	    }

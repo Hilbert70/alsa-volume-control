@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-g -I.
 DEPS = trim.h readIni.h
 LIBS=
 OBJS=keyscan.o trim.o  readIni.o
