@@ -9,3 +9,5 @@ A quick and dirty way to alter the volume through alsa without being logged in a
 In combination with
 https://learn.adafruit.com/trinket-usb-volume-knob/overview
 a fancy volume control nob
+
+Just did simple sudo commands, no hassle with asla api's and forks
